@@ -12,6 +12,8 @@
     
     Chen, Y., Zhang, D., Jin, Z., Chen, X., Zu, S., Huang, W., & Gan, S. (2016). Simultaneous denoising and reconstruction of 5-D seismic data via damped rank-reduction method. Geophysical Journal International, 206(3), 1695-1717.
     
+    Chen et al., 2023, coming soon. 
+    
 BibTeX:
 
 	@article{huang2016dmssa,
