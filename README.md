@@ -5,6 +5,8 @@
 
 **MATdrr** is a Matlab package for the damped rank reduction (DRR) method and its several variants. The DRR method has a variety of applications in both exploration and earthquake seismology, including but not limited to seismic denoising, seismic reconstruction, seismic diffraction separation, constrained LSRTM, constrained FWI, etc. The initial version of this package was held at https://github.com/chenyk1990/MATdrr, which is no longer maintained.
 
+The Python counterpart of the package can be found at https://github.com/aaspip/pydrr. 
+
 ## Reference
     Huang, W., Wang, R., Chen, Y., Li, H., & Gan, S. (2016). Damped multichannel singular spectrum analysis for 3D random noise attenuation. Geophysics, 81(4), V261-V270.
 
