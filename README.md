@@ -14,7 +14,7 @@ The Python counterpart of the package can be found at https://github.com/aaspip/
     
     Chen, Y., Zhang, D., Jin, Z., Chen, X., Zu, S., Huang, W., & Gan, S. (2016). Simultaneous denoising and reconstruction of 5-D seismic data via damped rank-reduction method. Geophysical Journal International, 206(3), 1695-1717.
     
-    Chen et al., 2023, coming soon. 
+    Chen, Y., Huang, W., Yang, L., Oboue, Y.A.S.I., Saad, O.M., and Chen Y.F. 2023, DRR: An open-source multi-platform package for the damped rank-reduction method and its applications in seismology. Computers & Geosciences, in press.
     
 BibTeX:
 
@@ -50,6 +50,14 @@ BibTeX:
 	  year={2016}
 	}
 
+	@article{chen2023drr,
+	  title={DRR: an open-source multi-platform package for the damped rank-reduction method and its applications in seismology},
+	  author={Yangkang Chen and Weilin Huang and Liuqing Yang and Yapo Abol\'{e} Serge Innocent Obou\'{e} and Omar M. Saad and Yunfeng Chen},
+	  journal={Computers \& Geosciences},
+	  volume={TBD},
+	  pages={in press},
+	  year={2023}
+	}
 -----------
 ## Copyright
     MATdrr developing team, 2013-present
