@@ -21,6 +21,7 @@
 %  [3] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
 %  [4] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
 %  [5] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
+%  [6] Chen, Y., Huang, W., Yang, L., Oboue, Y.A.S.I., Saad, O.M., and Chen Y.F. 2023, DRR: An open-source multi-platform package for the damped rank-reduction method and its applications in seismology. Computers & Geosciences, 180, 105440.
 
 clc;clear;close all;
 addpath(genpath('../matdrr'));
@@ -133,4 +134,27 @@ subplot(2,3,6);drr_plot3d(d2,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sam
 % subplot(3,2,6);drr_plot3d(data-diffr,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title('LDRR reflection','Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);
 print(gcf,'-dpng','-r300','test_matdrr_drr3drecon.png');
 print(gcf,'-depsc','-r200','test_matdrr_drr3drecon.eps');
+
+%% print the spectra
+nf=round(n1/2);nkx=n2;nky=n3;
+df=1/dt/2/nf;
+f=[0:nf-1]*df;kx=linspace(-0.5,0.5,nkx);ky=linspace(-0.5,0.5,nky);
+fmin=0;fmax=60;
+
+fd=fft(fft(fft(d,[],1),[],2),[],3);fd=fd(1:nf,:,:);
+fdn=fft(fft(fft(dn,[],1),[],2),[],3);fdn=fdn(1:nf,:,:);
+fd0=fft(fft(fft(d0,[],1),[],2),[],3);fd0=fd0(1:nf,:,:);
+fd1=fft(fft(fft(d1,[],1),[],2),[],3);fd1=fd1(1:nf,:,:);
+fd2=fft(fft(fft(d2,[],1),[],2),[],3);fd2=fd2(1:nf,:,:);
+
+figure('units','normalized','Position',[0.2 0.4 0.8, 0.6],'color','w');
+subplot(2,3,1);drr_plot3d(abs(fd),[100,10,10],f,kx,ky);zlim([fmin,fmax]);caxis([0,100]);colormap(jet);xlabel('Kx','Fontsize',15);ylabel('Ky','Fontsize',15);zlabel('Frequency (Hz)','Fontsize',15);title(strcat('Clean'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.5, -15,'a)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,2);drr_plot3d(abs(fdn),[100,10,10],f,kx,ky);zlim([fmin,fmax]);caxis([0,100]);colormap(jet);xlabel('Kx','Fontsize',15);ylabel('Ky','Fontsize',15);zlabel('Frequency (Hz)','Fontsize',15);title(strcat('Noisy'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.5, -15,'b)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,3);drr_plot3d(abs(fd0),[100,10,10],f,kx,ky);zlim([fmin,fmax]);caxis([0,100]);colormap(jet);xlabel('Kx','Fontsize',15);ylabel('Ky','Fontsize',15);zlabel('Frequency (Hz)','Fontsize',15);title(strcat('Incomplete'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.5, -15,'c)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,5);drr_plot3d(abs(fd1),[100,10,10],f,kx,ky);zlim([fmin,fmax]);caxis([0,100]);colormap(jet);xlabel('Kx','Fontsize',15);ylabel('Ky','Fontsize',15);zlabel('Frequency (Hz)','Fontsize',15);title(strcat('RR'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.5, -15,'d)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,6);drr_plot3d(abs(fd2),[100,10,10],f,kx,ky);zlim([fmin,fmax]);caxis([0,100]);colormap(jet);xlabel('Kx','Fontsize',15);ylabel('Ky','Fontsize',15);zlabel('Frequency (Hz)','Fontsize',15);title(strcat('DRR'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.5, -15,'e)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+print(gcf,'-dpng','-r300','test_matdrr_drr3drecon_fk.png');
+print(gcf,'-depsc','-r200','test_matdrr_drr3drecon_fk.eps');
+
+
 
