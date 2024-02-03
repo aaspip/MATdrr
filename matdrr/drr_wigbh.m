@@ -1,4 +1,4 @@
-function  yc_wigbh2(din,x,z,scale)
+function  drr_wigbh(din,x,z,scale)
 %WIGBH wigb horizontally
 %din: size nz*nx
 %
