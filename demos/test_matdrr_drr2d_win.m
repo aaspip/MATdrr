@@ -80,4 +80,22 @@ print(gcf,'-dpng','-r300','test_matdrr_drr2d_win.png');
 print(gcf,'-depsc','-r200','test_matdrr_drr2d_win.eps');
 
 
+%% plot FK spectra
+dt=0.004;dx=1;
+[D,f,k]=drr_fk2d(d,dt,dx);
+[Dn,f,k]=drr_fk2d(dn,dt,dx);
+[D1,f,k]=drr_fk2d(d1,dt,dx);
+[D2,f,k]=drr_fk2d(d2,dt,dx);
+[DN1,f,k]=drr_fk2d(dn-d1,dt,dx);
+[DN2,f,k]=drr_fk2d(dn-d2,dt,dx);
+
+fmin=0;fmax=30;
+figure('units','normalized','Position',[0.2 0.4 0.55, 0.45]);
+subplot(1,6,1);drr_imagesc(abs(D),10,2,k,f);colormap(jet);ylim([fmin,fmax]);caxis([0,50]);xlabel('K','Fontsize',15);ylabel('Frequency (Hz)','Fontsize',15);set(gca,'Linewidth',2,'Fontsize',12);axis on;title('Clean');text(-0.85,-2,'a)','color','k','Fontsize',20,'fontweight','bold','HorizontalAlignment','left');
+subplot(1,6,2);drr_imagesc(abs(Dn),10,2,k,f);colormap(jet);ylim([fmin,fmax]);caxis([0,50]);xlabel('K','Fontsize',15);set(gca,'Linewidth',2,'Fontsize',12);axis on;title('Noisy');text(-0.85,-2,'b)','color','k','Fontsize',20,'fontweight','bold','HorizontalAlignment','left');
+subplot(1,6,3);drr_imagesc(abs(D1),10,2,k,f);colormap(jet);ylim([fmin,fmax]);caxis([0,50]);xlabel('K','Fontsize',15);set(gca,'Linewidth',2,'Fontsize',12);axis on;title('DRR');text(-0.85,-2,'c)','color','k','Fontsize',20,'fontweight','bold','HorizontalAlignment','left');
+subplot(1,6,4);drr_imagesc(abs(D2),10,2,k,f);colormap(jet);ylim([fmin,fmax]);caxis([0,50]);xlabel('K','Fontsize',15);set(gca,'Linewidth',2,'Fontsize',12);axis on;title('LDRR');text(-0.85,-2,'d)','color','k','Fontsize',20,'fontweight','bold','HorizontalAlignment','left');
+subplot(1,6,5);drr_imagesc(abs(DN1),10,2,k,f);colormap(jet);ylim([fmin,fmax]);caxis([0,50]);xlabel('K','Fontsize',15);set(gca,'Linewidth',2,'Fontsize',12);axis on;title('DRR');text(-0.85,-2,'e)','color','k','Fontsize',20,'fontweight','bold','HorizontalAlignment','left');
+subplot(1,6,6);drr_imagesc(abs(DN2),10,2,k,f);colormap(jet);ylim([fmin,fmax]);caxis([0,50]);xlabel('K','Fontsize',15);set(gca,'Linewidth',2,'Fontsize',12);axis on;title('LDRR');text(-0.85,-2,'f)','color','k','Fontsize',20,'fontweight','bold','HorizontalAlignment','left');
+print(gcf,'-dpng','-r300','test_matdrr_drr2d_win_fk.png');
 
