@@ -29,14 +29,14 @@ addpath(genpath('../matdrr'));
 
 
 %% generate 3D synthetic data
-a1=zeros(300,20);
+a1=zeros(300,40);
 [n,m]=size(a1);
 a3=a1;
 a4=a1;
 
 k=0;
 a=0.1;
-b=1;
+% b=1;
 for t=-0.055:0.002:0.055
     k=k+1;
     b1(k)=(1-2*(pi*30*t).^2).*exp(-(pi*30*t).^2);
@@ -46,58 +46,61 @@ for t=-0.055:0.002:0.055
 end
 for i=1:m
   t1(i)=round(140);
-  t3(i)=round(-6*i+180);
-  t4(i)=round(6*i+10);
+  t3(i)=round(-3*i+180);
+  t4(i)=round(3*i+10);
   a1(t1(i):t1(i)+k-1,i)=b1; 
   a3(t3(i):t3(i)+k-1,i)=b1; 
   a4(t4(i):t4(i)+k-1,i)=b1;
 end
 
-temp=a1(1:300,:)+a3(1:300,:)+a4(1:300,:);
-for j=1:20
-    a4=zeros(300,20);
-    for i=1:m
-  t4(i)=round(6*i+10+3*j); 
-  a4(t4(i):t4(i)+k-1,i)=b1;
-  
-  t1(i)=round(140-2*j);
-  a1(t1(i):t1(i)+k-1,i)=b1;
-    end
-    shot(:,:,j)=a1(1:300,:)+a3(1:300,:)+a4(1:300,:);
-end
-plane3d=shot;
-d=plane3d/max(max(max(plane3d)));
-
+d=a1+a3+a4;
 
 %% add band-limitted noise and decimate data
 randn('state',201315);
 [nt,nx,ny]=size(d);
 noise=randn(nt,nx,ny);
 noise=drr_bandpass(noise,0.004,0,60);
-dn=0.2*noise+d;
+dn=0.1*noise+d;
 
-%% Doing the aliased reconstruction (densification)
-d3=drr3drecon_dealiase(dn,1,50,0.004,3,4,10,2,2,1);
+%% Doing the aliased reconstruction (2D densification)
+d1=dn(:,1:2:end);
+[n1,n2,n3]=size(d1);
+d3=drr3drecon_dealiase(d1,0,50,0.004,3,4,20,2,2,1);%takes about ? minutes
+d3=d3(:,:,1);
 
-dy=1;dx=1;dt=0.004;
-[n1,n22,n33]=size(dn);
-yy=[1:n33]*dy;
-xx=[1:n22]*dx;
-zz=[1:n1]*dt;
 
-[n1,n2,n3]=size(d3);
-dy=1;dx=1;dt=0.004;
-y=[1:n3]*dy;
+%% professional plot
+dt=0.004;dx=1;
+figure('units','normalized','Position',[0.2 0.4 0.5, 0.8]);
+subplot(2,2,1)
+t=[0:n1-1]*dt;
 x=[1:n2]*dx;
-z=[1:n1]*dt;
-figure('units','normalized','Position',[0.2 0.4 0.8, 0.6],'color','w');
-subplot(1,2,1);drr_plot3d(dn,[100,5,5],zz,xx,yy);caxis([-0.5,0.5]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title('Raw','Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-2.5,-2.5, -0.3,'a)','color','k','Fontsize',40,'fontweight','bold','HorizontalAlignment','left');
-subplot(1,2,2);drr_plot3d(d3,[100,10,10],z,x,y);caxis([-0.5,0.5]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title('Densified','Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-5,-5, -0.3,'b)','color','k','Fontsize',40,'fontweight','bold','HorizontalAlignment','left');
+drr_imagesc(d1,1,2,x,t);
+ylabel('Time (s)','Fontsize',16,'fontweight','bold');
+xlabel('Trace','Fontsize',16,'fontweight','bold');
+set(gca,'Linewidth',2,'Fontsize',16,'Fontweight','bold');
+title('Under-sampled','Fontsize',16,'fontweight','bold');
+text(-2.5,-0.1,'a)','color','k','Fontsize',24,'fontweight','bold','HorizontalAlignment','center');
 
-% subplot(3,2,5);drr_plot3d(diffr1,[100,10,10],z,x,y);caxis([-0.5,0.5]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title('LDRR diffraction','Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);
-% subplot(3,2,6);drr_plot3d(data-diffr,[100,10,10],z,x,y);caxis([-0.5,0.5]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title('LDRR reflection','Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);
-print(gcf,'-dpng','-r300','test_matdrr_drr3drecon_dealiase.png');
-print(gcf,'-depsc','-r200','test_matdrr_drr3drecon_dealiase.eps');
+subplot(2,2,2)
+t=[0:n1-1]*dt;
+x=[1:n2]*dx;
+drr_imagesc(d3,1,2,[1:n2*2]*dx,t);
+ylabel('Time (s)','Fontsize',16,'fontweight','bold');
+set(gca,'Linewidth',2,'Fontsize',16,'Fontweight','bold');
+xlabel('Trace','Fontsize',16,'fontweight','bold');
+title('Densified','Fontsize',16,'fontweight','bold');
+text(-5,-0.1,'b)','color','k','Fontsize',24,'fontweight','bold','HorizontalAlignment','center');
 
+subplot(2,1,2);
+dcomp=[d,dn,d3,dn-d3];
+drr_imagesc(dcomp,1,2,[1:n2*4]*dx,t);
+% imagesc(1:n2,[0:n1-1]*dt,dcomp);colormap(seis);
+ylabel('Time (s)','Fontsize',16,'fontweight','bold');
+xlabel('Trace','Fontsize',16,'fontweight','bold');
+title(sprintf('2D densification performance (Clean|Noisy|Recon|Error; SNR=%g dB)',yc_snr(d,d3)),'Fontsize',16,'fontweight','bold');
+set(gca,'Linewidth',2,'Fontsize',16,'Fontweight','bold');
+text(-5,-0.1,'c)','color','k','Fontsize',24,'fontweight','bold','HorizontalAlignment','center');
 
-
+print(gcf,'-dpng','-r300','test_matdrr_drr2drecon_dealiase.png');
+print(gcf,'-depsc','-r200','test_matdrr_drr2drecon_dealiase.eps');

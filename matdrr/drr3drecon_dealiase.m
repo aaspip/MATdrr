@@ -3,7 +3,6 @@ function [ D1 ] = drr3drecon_dealiase(D,flow,fhigh,dt,N,K,Niter,a,lambda,verb)
 %  simultaneous denoising and reconstruction)
 %
 %  IN   D:   	 intput 3D data
-%       MASK:   sampling mask (consistent with the POCS based approaches)
 %       flow:   processing frequency range (lower)
 %       fhigh:  processing frequency range (higher)
 %       dt:     temporal sampling interval
@@ -30,13 +29,14 @@ function [ D1 ] = drr3drecon_dealiase(D,flow,fhigh,dt,N,K,Niter,a,lambda,verb)
 %  GNU General Public License for more details: http://www.gnu.org/licenses/
 %
 %  References:
-%  
+%
 %  [0] Huang, W., D. Feng, and Y. Chen, 2020, De‐aliased and de‐noise Cadzow filtering for seismic data reconstruction, Geophysical Prospecting, 68, 443-571.
 %  [1] Chen, Y., W. Huang, D. Zhang, W. Chen, 2016, An open-source matlab code package for improved rank-reduction 3D seismic data denoising and reconstruction, Computers & Geosciences, 95, 59-66.
 %  [2] Chen, Y., D. Zhang, Z. Jin, X. Chen, S. Zu, W. Huang, and S. Gan, 2016, Simultaneous denoising and reconstruction of 5D seismic data via damped rank-reduction method, Geophysical Journal International, 206, 1695-1717.
 %  [3] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
 %  [4] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
 %  [5] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
+%  [6] Chen et al., 2023, DRR: an open-source multi-platform package for the damped rank-reduction method and its applications in seismology, Computers & Geosciences, 180, 105440.
 
 if nargin==0
     error('Input data must be provided!');
@@ -98,8 +98,6 @@ for i=1:nx
 end
 G2=zeros(ny*a,ny);
 GG2=zeros(ny*a,ny);
-G2=zeros(ny*a,ny);
-GG2=zeros(ny*a,ny);
 for i=1:ny
     G2(1+(i-1)*a,i)=1;
     GG2(2+(i-1)*a:i*a,i)=ones(a-1,1);
@@ -109,7 +107,7 @@ end
 
 % main loop
 for k=ilow:ihigh
-    
+
     fa_re=zeros(ny,nx);
     i_low=round(k/a);
     temp_low=DATA_FX(i_low,:,:);
@@ -124,7 +122,7 @@ for k=ilow:ihigh
     fa_new1=fa_new1';
     fa_new=G2*fa_new1;
     fa_iter=fa_new;
-    
+
     for iter=1:Niter
         A=h_hankel(fa_iter,lx2,ly2);
         M=U_low(:,1:K)*U_low(:,1:K)'*A;
@@ -149,7 +147,7 @@ for k=ilow:ihigh
     if(mod(k,5)==0 && verb==1)
         fprintf( 'F %d is done!\n\n',k);
     end
-    
+
 end
 
 % Honor symmetries
@@ -249,7 +247,7 @@ end
 Ny=m+1-Nx;
 Ly=n+1-Lx;
 for i=1:n
-    for j=1:Ny     
+    for j=1:Ny
         H(i,(j-1)*Nx+1:j*Nx)=fa(i,j:Nx+j-1);%Hankel matrix
     end
 end
@@ -279,7 +277,11 @@ for i=1:Lx+Ly-1
     for j=1:Ly
         sump=sump+M_new(1+(j-1)*Ny:j*Ny,1+(i-1)*Nx:i*Nx);
     end
-    temp(:,:,i)=sump/JS_1(1,i);
+    if Ly==1
+        temp(:,:,i)=sump;
+    else
+        temp(:,:,i)=sump/JS_1(1,i);
+    end
 end
 
 N_new=zeros(Ny,Nx+Ny-1);
