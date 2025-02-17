@@ -98,7 +98,7 @@ drr_imagesc(dcomp,1,2,[1:n2*4]*dx,t);
 % imagesc(1:n2,[0:n1-1]*dt,dcomp);colormap(seis);
 ylabel('Time (s)','Fontsize',16,'fontweight','bold');
 xlabel('Trace','Fontsize',16,'fontweight','bold');
-title(sprintf('2D densification performance (Clean|Noisy|Recon|Error; SNR=%g dB)',yc_snr(d,d3)),'Fontsize',16,'fontweight','bold');
+title(sprintf('2D densification performance (Clean|Noisy|Recon|Error; SNR=%g dB)',drr_snr(d,d3)),'Fontsize',16,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',16,'Fontweight','bold');
 text(-5,-0.1,'c)','color','k','Fontsize',24,'fontweight','bold','HorizontalAlignment','center');
 
