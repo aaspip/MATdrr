@@ -157,5 +157,40 @@ subplot(2,3,6);drr_plot3d(abs(fd2),[100,10,10],f,kx,ky);zlim([fmin,fmax]);caxis(
 print(gcf,'-dpng','-r300','test_matdrr_drr3drecon_fk.png');
 print(gcf,'-depsc','-r200','test_matdrr_drr3drecon_fk.eps');
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% the following is to compare with the famous POCS and IST method
+%%
+%% Created by Yangkang Chen, July 30, 2025
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% POCS (Abma, 2006)
+thr=2;
+niter=50;
+dpocs=drr_fk_pocs(d0,zeros(size(d0)),mask,thr,niter,'pocs');
+s3=drr_snr(d,dpocs,2);      %POCS method
+
+%% IST (Chen et al., 2015, Seismic data interpolation using nonlinear shaping regularization, Journal of Seismic Exploration, 24, 327-342)
+% Let me know any earlier report of this formula than Chen et al. (2015)
+thr=2;
+niter=50;
+dist=drr_fk_pocs(d0,zeros(size(d0)),mask,thr,niter,'ist');
+s4=drr_snr(d,dist,2);      %IST method
+
+%% Weighted POCS (Gao et al., 2013)
+thr=2;
+niter=50;
+dwpocs=drr_fk_pocs(d0,zeros(size(d0)),mask,thr,niter,'wpocs');
+s5=drr_snr(d,dwpocs,2);      %WPOCS method
+
+figure('units','normalized','Position',[0.2 0.4 0.8, 0.6],'color','w');
+subplot(2,3,1);drr_plot3d(d,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title(strcat('Clean'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.2, -0.3,'a)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,2);drr_plot3d(dn,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title(strcat('Noisy (SNR=',num2str(sn),' dB )'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.2, -0.3,'b)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,3);drr_plot3d(d0,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title(strcat('Incomplete (SNR=',num2str(s0),' dB )'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.2, -0.3,'c)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,4);drr_plot3d(dpocs,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title(strcat('POCS (SNR=',num2str(s3),' dB)'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.2, -0.3,'d)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,5);drr_plot3d(dist,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title(strcat('IST (SNR=',num2str(s4),' dB)'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.2, -0.3,'d)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+subplot(2,3,6);drr_plot3d(dwpocs,[100,10,10],z,x,y);caxis([-0.4,0.4]);xlabel('X (sample)','Fontsize',15);ylabel('Y (sample)','Fontsize',15);zlabel('Time (s)','Fontsize',15);title(strcat('WPOCS (SNR=',num2str(s5),' dB)'),'Fontsize',15,'fontweight','normal');set(gca,'Linewidth',2,'Fontsize',15);text(-0.5,-0.2, -0.3,'e)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','left');
+
+
+print(gcf,'-dpng','-r300','test_matdrr_drr3drecon_pocs.png');
+print(gcf,'-depsc','-r200','test_matdrr_drr3drecon_pocs.eps');
 
