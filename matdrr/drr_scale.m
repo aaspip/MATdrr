@@ -1,26 +1,38 @@
 function [ D1 ] = drr_scale(D,N,dscale)
 %drr_scale: Scale the data up to the Nth dimension = sfscale axis=N
-%  IN   D:   	intput data
-%       N:      number of dimension for scaling
-%               default: N=2
+% IN   D:   	intput data
+%      N:      number of dimension for scaling
+%              default: N=2
 % 		dscale:  Scale by this factor
-%       (does not include the rscale and pclip functions (not convenient actually))
+%      (does not include the rscale and pclip functions (not convenient actually))
 %
-%  OUT   D1:  	output data
+% OUT   D1:  	output data
 %
-%  Copyright (C) 2015 The University of Texas at Austin
-%  Copyright (C) 2015 Yangkang Chen
-%  Modified by Yangkang Chen on Jan, 2020
+% Copyright (C) 2015 The University of Texas at Austin
+% Copyright (C) 2015 Yangkang Chen
+% Modified by Yangkang Chen on Jan, 2020
+% 
+% MIT License
+% 
+% Copyright (C) 2015 Yangkang Chen
 %
-%  This program is free software: you can redistribute it and/or modify
-%  it under the terms of the GNU General Public License as published
-%  by the Free Software Foundation, either version 3 of the License, or
-%  any later version.
-%
-%  This program is distributed in the hope that it will be useful,
-%  but WITHOUT ANY WARRANTY; without even the implied warranty of
-%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%  GNU General Public License for more details: http://www.gnu.org/licenses/
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
 %
 
 if nargin==0

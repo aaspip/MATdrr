@@ -1,48 +1,59 @@
 function [ D1 ] = odrr5drecon(D,MASK,flow,fhigh,dt,N,K,O,Niter,eps,verb,mode,a)
-%  ODRR5DRECON: Optimally damped rank-reduction method for 5D simultaneous denoising and reconstruction
+% ODRR5DRECON: Optimally damped rank-reduction method for 5D simultaneous denoising and reconstruction
 %
-%  IN   D:   	intput 5D data
-%       MASK:   sampling mask (consistent with the POCS based approaches)
-%       flow:   processing frequency range (lower)
-%       fhigh:  processing frequency range (higher)
-%       dt:     temporal sampling interval
-%       N:      number of singular value to be preserved
-%       K:     damping factor (default: 4)
-%       O:	    ODRR flag; 0 for DRR and 1 for ODRR (default: 1)
-%       Niter:  number of maximum iteration
-%       eps:    tolerence (||S(n)-S(n-1)||_F<eps*S(n))
-%       verb:   verbosity flag (default: 0)
-%       mode:   mode=1: denoising and reconstruction
-%               mode=0: reconstruction only
-%       a:      scalar
+% IN   D:   	intput 5D data
+%      MASK:   sampling mask (consistent with the POCS based approaches)
+%      flow:   processing frequency range (lower)
+%      fhigh:  processing frequency range (higher)
+%      dt:     temporal sampling interval
+%      N:      number of singular value to be preserved
+%      K:     damping factor (default: 4)
+%      O:	    ODRR flag; 0 for DRR and 1 for ODRR (default: 1)
+%      Niter:  number of maximum iteration
+%      eps:    tolerence (||S(n)-S(n-1)||_F<eps*S(n))
+%      verb:   verbosity flag (default: 0)
+%      mode:   mode=1: denoising and reconstruction
+%              mode=0: reconstruction only
+%      a:      scalar
 %
-%  OUT  D1:  	output data
+% OUT  D1:  	output data
 %
-%  Copyright (C) 2015 The University of Texas at Austin
-%  Copyright (C) 2015 Yangkang Chen
-%  Modified 2018 by Yangkang Chen
+% Copyright (C) 2015 Yangkang Chen
+% Modified 2018 by Yangkang Chen
+% 
+% MIT License
+% 
+% Copyright (C) 2015 Yangkang Chen
 %
-%  This program is free software: you can redistribute it and/or modify
-%  it under the terms of the GNU General Public License as published
-%  by the Free Software Foundation, either version 3 of the License, or
-%  any later version.
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
 %
-%  This program is distributed in the hope that it will be useful,
-%  but WITHOUT ANY WARRANTY; without even the implied warranty of
-%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%  GNU General Public License for more details: http://www.gnu.org/licenses/
+% References:
 %
-%  References:
-%
-%  [1] Bai et al., 2020, Seismic signal enhancement based on the lowrank methods, Geophysical Prospecting, 68, 2783-2807.
-%  [2] Chen et al., 2020, Five-dimensional seismic data reconstruction using the optimally damped rank-reduction method, Geophysical Journal International, 222, 1824-1845.
-%  [3] Chen, Y., W. Huang, D. Zhang, W. Chen, 2016, An open-source matlab code package for improved rank-reduction 3D seismic data denoising and reconstruction, Computers & Geosciences, 95, 59-66.
-%  [4] Chen, Y., D. Zhang, Z. Jin, X. Chen, S. Zu, W. Huang, and S. Gan, 2016, Simultaneous denoising and reconstruction of 5D seismic data via damped rank-reduction method, Geophysical Journal International, 206, 1695-1717.
-%  [5] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
-%  [6] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
-%  [7] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
-%  [8] Oboue et al., 2021, Robust damped rank-reduction method for simultaneous denoising and reconstruction of 5-D seismic data, Geophysics, 86, V71–V89.
-%  [9] Chen et al., 2023, DRR: an open-source multi-platform package for the damped rank-reduction method and its applications in seismology, Computers & Geosciences, 180, 105440.
+% [1] Bai et al., 2020, Seismic signal enhancement based on the lowrank methods, Geophysical Prospecting, 68, 2783-2807.
+% [2] Chen et al., 2020, Five-dimensional seismic data reconstruction using the optimally damped rank-reduction method, Geophysical Journal International, 222, 1824-1845.
+% [3] Chen, Y., W. Huang, D. Zhang, W. Chen, 2016, An open-source matlab code package for improved rank-reduction 3D seismic data denoising and reconstruction, Computers & Geosciences, 95, 59-66.
+% [4] Chen, Y., D. Zhang, Z. Jin, X. Chen, S. Zu, W. Huang, and S. Gan, 2016, Simultaneous denoising and reconstruction of 5D seismic data via damped rank-reduction method, Geophysical Journal International, 206, 1695-1717.
+% [5] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
+% [6] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
+% [7] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
+% [8] Oboue et al., 2021, Robust damped rank-reduction method for simultaneous denoising and reconstruction of 5-D seismic data, Geophysics, 86, V71–V89.
+% [9] Chen et al., 2023, DRR: an open-source multi-platform package for the damped rank-reduction method and its applications in seismology, Computers & Geosciences, 180, 105440.
 
 if nargin==0
     error('Input data must be provided!');
@@ -201,8 +212,8 @@ function [dout]=P_R(din,N,K)
 % Rank reduction on the block Hankel matrix
 
 
-%      [U,D,V]=svds(din,N); % a little bit slower for small matrix
-%      dout=U*D*V';
+%     [U,D,V]=svds(din,N); % a little bit slower for small matrix
+%     dout=U*D*V';
 % %
 [U,D,V]=svds(din,N+1);
 for j=1:N

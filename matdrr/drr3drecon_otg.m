@@ -1,50 +1,59 @@
 function [ D1 ] = drr3drecon_otg(D,x,y,nx,ny,ox,oy,mx,my,flow,fhigh,dt,N,K,Niter,eps,verb,mode,a)
-%  DRR3DRECON_OTG: OTG DRR for 3D seismic reconstruction 
+% DRR3DRECON_OTG: OTG DRR for 3D seismic reconstruction 
 %
-%  IN   D:   	 intput 2D data
-%       x:     input x coordinates
-%       y:     input y coordinates
-%       nx:    input number of binned x points
-%       ny:    input number of binned y points
-%       ox:    min of x
-%       oy:    min of y
-%       mx:    max of x
-%       my:    max of y
-%       flow:   processing frequency range (lower)
-%       fhigh:  processing frequency range (higher)
-%       dt:     temporal sampling interval
-%       N:      number of singular value to be preserved
-%       K:     damping factor (default: 4)
-%       Niter:  number of maximum iteration
-%       eps:    tolerence (||S(n)-S(n-1)||_F<eps)
-%       verb:   verbosity flag (default: 0)
-%       mode:   mode=1: denoising and reconstruction
-%               mode=0: reconstruction only
-%       a:      weight vector
+% IN   D:   	 intput 2D data
+%      x:     input x coordinates
+%      y:     input y coordinates
+%      nx:    input number of binned x points
+%      ny:    input number of binned y points
+%      ox:    min of x
+%      oy:    min of y
+%      mx:    max of x
+%      my:    max of y
+%      flow:   processing frequency range (lower)
+%      fhigh:  processing frequency range (higher)
+%      dt:     temporal sampling interval
+%      N:      number of singular value to be preserved
+%      K:     damping factor (default: 4)
+%      Niter:  number of maximum iteration
+%      eps:    tolerence (||S(n)-S(n-1)||_F<eps)
+%      verb:   verbosity flag (default: 0)
+%      mode:   mode=1: denoising and reconstruction
+%              mode=0: reconstruction only
+%      a:      weight vector
 %
-%  OUT  D1:  	output data
+% OUT  D1:  	output data
+% 
+% MIT License
+% 
+% Copyright (C) 2021 Yangkang Chen
 %
-%  Copyright (C) 2021 The University of Texas at Austin
-%  Copyright (C) 2021 Yangkang Chen
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
 %
-%  This program is free software: you can redistribute it and/or modify
-%  it under the terms of the GNU General Public License as published
-%  by the Free Software Foundation, either version 3 of the License, or
-%  any later version.
+% References:
 %
-%  This program is distributed in the hope that it will be useful,
-%  but WITHOUT ANY WARRANTY; without even the implied warranty of
-%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%  GNU General Public License for more details: http://www.gnu.org/licenses/
-%
-%  References:
-%
-%  [1] Chen, Y., W. Huang, D. Zhang, W. Chen, 2016, An open-source matlab code package for improved rank-reduction 3D seismic data denoising and reconstruction, Computers & Geosciences, 95, 59-66.
-%  [2] Chen, Y., D. Zhang, Z. Jin, X. Chen, S. Zu, W. Huang, and S. Gan, 2016, Simultaneous denoising and reconstruction of 5D seismic data via damped rank-reduction method, Geophysical Journal International, 206, 1695-1717.
-%  [3] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
-%  [4] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
-%  [5] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
-%  [6] Chen et al., 2023, DRR: an open-source multi-platform package for the damped rank-reduction method and its applications in seismology, Computers & Geosciences, 180, 105440.
+% [1] Chen, Y., W. Huang, D. Zhang, W. Chen, 2016, An open-source matlab code package for improved rank-reduction 3D seismic data denoising and reconstruction, Computers & Geosciences, 95, 59-66.
+% [2] Chen, Y., D. Zhang, Z. Jin, X. Chen, S. Zu, W. Huang, and S. Gan, 2016, Simultaneous denoising and reconstruction of 5D seismic data via damped rank-reduction method, Geophysical Journal International, 206, 1695-1717.
+% [3] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
+% [4] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
+% [5] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
+% [6] Chen et al., 2023, DRR: an open-source multi-platform package for the damped rank-reduction method and its applications in seismology, Computers & Geosciences, 180, 105440.
 
 if nargin==0
     error('Input data must be provided!');
@@ -113,12 +122,12 @@ s=0.5*ones(Niter,1);
 for k=ilow:ihigh
     S_obs=squeeze(DATA_FX(k,:)).'; %1D vector  
     Sn_1=zeros(nx,ny);
-%     Sn_1=drr_inter_op(DATA_FX(k,:),par,-1);
+%    Sn_1=drr_inter_op(DATA_FX(k,:),par,-1);
     for iter=1:Niter
         
-%         size(Sn_1)
-%         size(S_obs)
-%         size(inter_op(Sn_1,par,1))
+%        size(Sn_1)
+%        size(S_obs)
+%        size(inter_op(Sn_1,par,1))
         Sn=Sn_1-s(iter)*drr_inter_op(drr_inter_op(Sn_1,par,-1)-S_obs,par,1);
         
         
@@ -126,7 +135,7 @@ for k=ilow:ihigh
         M=P_RD(M,N,K);
         Sn=P_A(M,nx,ny,lx,ly);
         
-%         Sn=a(iter)*S_obs+(1-a(iter))*mask.*Sn+(1-mask).*Sn;
+%        Sn=a(iter)*S_obs+(1-a(iter))*mask.*Sn+(1-mask).*Sn;
         if norm(Sn-Sn_1,'fro')<eps
             break;
         end
@@ -179,8 +188,8 @@ function [dout]=P_RD(din,N,K)
 % Rank reduction on the block Hankel matrix
 
 
-%      [U,D,V]=svds(din,N); % a little bit slower for small matrix
-%      dout=U*D*V';
+%     [U,D,V]=svds(din,N); % a little bit slower for small matrix
+%     dout=U*D*V';
 % %
 [U,D,V]=svd(din);
 for j=1:N
